@@ -19,7 +19,7 @@ Most attempts at this kind of automation fail for one reason: generation runs op
 
 **Skills (the distillation loop).** When a leg is proven in a lab, it gets distilled into a two-file pair: a **knowledge base** (the *why*, confidence-labeled PROVEN/PARTIAL/INTENT) plus an **operating-procedure prompt** (the *how*, feedable to a fresh agent on any new game). The pair is a transferable skill — weeks of hands-on work compressed into something re-executable in a session. First member of the library, already proven:
 
-- `../evaluation_system_knowledge.md` + `../evaluation_system_prompt.md` — the evaluation & verification leg: policy-relative difficulty measurement (bot ladder, seeded Monte-Carlo, observer node, `--fixed-fps` lossless speedup, meta-loop modeled via the game's real APIs) frozen into a regression gate with banded assertions.
+- `skills/evaluation/knowledge.md` + `skills/evaluation/prompt.md` — the evaluation & verification leg: policy-relative difficulty measurement (bot ladder, seeded Monte-Carlo, observer node, `--fixed-fps` lossless speedup, meta-loop modeled via the game's real APIs) frozen into a regression gate with banded assertions.
 
 Future skills follow the same path: build concretely in a lab → distill knowledge + procedure → library grows. Candidates: GDD compilation, milestone build loop, visual evaluation, asset pipeline, closed-loop tuning.
 
