@@ -1,14 +1,22 @@
-# Dreamer — Brainstorm
+# Dreamer
 
 Dreamer is an agentic system that automates game development end-to-end: from a game design document (GDD) to a final playable product. It is bigger than any single game — it is the orchestrator and harness that develops games, tested against real game projects (**labs**), and it grows by distilling what works in the labs into reusable, transferable skills.
 
 Engine target: Godot. It's the most agent-automatable engine — `.tscn`/`.tres`/`.gd` are human-readable text, GDScript is easy to generate and statically check, `godot --headless` runs the game and imports assets from the CLI, and the scene/resource model is fully data-driven.
 
+## Repository map
+
+- `README.md` — this file: vision, operating model, architecture, stack (slow-changing).
+- `PLAN.md` — roadmap and statuses (moves with every working session).
+- `CLAUDE.md` — how we develop here: the working agreement and conventions.
+- `skills/` — the skill library: one directory per skill, `skills/<name>/{knowledge,prompt}.md`.
+- Labs are **sibling repos** (e.g. `../new-game/` — lab #1), each with its own plan and conventions.
+
 ## The core insight: it's a feedback loop, not a generator
 
 Most attempts at this kind of automation fail for one reason: generation runs open-loop. An agent writes scenes, scripts, and assets, but never *sees* the result, so errors compound silently until the output is unsalvageable. The single most load-bearing piece of the system is not the part that writes the game — it's the part that lets agents **run the game and observe what happened**. Everything is arranged around that loop: act → observe → judge → correct.
 
-**This is no longer a hypothesis.** The verification leg was built and battle-tested in lab #1 before dreamer existed (see below) — including a regression gate that caught a real week-old balance regression on its literal first run. The companion meta-principle, proven the hard way: *for automation, the evaluation system is the product.* Every system you can measure is a system an agent can safely change.
+**This is no longer a hypothesis.** The verification leg was built and battle-tested in lab #1 before dreamer existed — including a regression gate that caught a real week-old balance regression on its literal first run. The companion meta-principle, proven the hard way: *for automation, the evaluation system is the product.* Every system you can measure is a system an agent can safely change.
 
 ## The operating model: labs → skills → orchestrator
 
@@ -63,17 +71,26 @@ Cheap, well-placed gates: approve the formalized spec, approve the art direction
 
 "Compiles and doesn't crash" is necessary; games also need to be *fun*. Proven core: fun operationalized as *difficulty, measured against the intended player's skill, landing in a target band* (the flow channel) — measurable, tunable, assertable. Open frontier: pacing metrics (the "hard but boring" guard), closed-loop auto-tuning ("tune X to target Y" as one command), and π_human — fitting a policy to real play traces so difficulty becomes a personal fun proxy.
 
+## Stack
+
+Promote what the lab proved; add exactly one new layer (the orchestrator), in two stages.
+
+- **Engine:** Godot 4.6 — GDScript + text resources, driven via `godot --headless`. Per-game tooling (harness, gate scripts) stays GDScript inside each lab; nothing dreamer-side reimplements game logic.
+- **Verification:** bash + Python (the `check.sh` + assert-script pattern). Exit codes are the contract every layer above depends on.
+- **Skills:** markdown, runtime-agnostic — they must outlive any orchestrator version that feeds them.
+- **Orchestration, staged:**
+  - *Stage 1 (now):* Claude Code itself — skills/commands/hooks in the lab repos; the `/milestone` loop is just a command. Zero new infrastructure; running it human-triggered teaches us what the real orchestrator must handle.
+  - *Stage 2 (when loops run unattended or fan out):* Python + the Claude Agent SDK — sessions spawned programmatically, gate as the brake, budgets, resumability, parallel fan-out over variants compared via the deterministic harness.
+  - No agent frameworks (LangGraph, CrewAI, …): Claude Code already is the agent harness, and dreamer's control flow is simple deterministic code.
+- **Assets:** Python; image-gen APIs behind one provider-agnostic client (providers churn; the style-bible threading and post-processing are the durable parts).
+- **State:** git + markdown ledgers in-repo; JSON for machine outputs. No database until fan-out volumes force one.
+
 ## Scope decisions
 
 - **2D, game-jam scale** for v1. Dramatically more tractable for asset generation and visual verification; lab #1 already fits this shape.
 - Later: **fan-out agentic workflows** — generate multiple candidate interpretations/variants (designs, art directions, tunings) in parallel and select, rather than committing to one path. The deterministic harness makes candidates *comparable*, which is what makes fan-out meaningful.
 - We need to start somewhere; depth first, breadth later.
 
-## Where we are, and what's next
+## Status & roadmap
 
-The riskiest piece (verification) is de-risked and distilled. The natural next moves, in rough order of leverage:
-
-1. **The milestone loop** (lab #1, Phase 2) — automate the build step that's been run manually all along; the gate gives it brakes. This is the orchestrator's first organ, built where it can be tested.
-2. **Visual evaluation** (lab #1, Phase 3) — gives agents eyes; prototype of the art leg and prerequisite for the asset pipeline.
-3. **Spec layer** — start small: formalize lab #1's design docs into an IR shape and see what the milestone loop actually needs from it.
-4. **Lab #2** — a different genre, to force the eval skill (and everything after it) to generalize.
+Lives in [`PLAN.md`](PLAN.md) — skill library, orchestrator stages, labs, and the near-term sequence. How we work day-to-day is in [`CLAUDE.md`](CLAUDE.md).
