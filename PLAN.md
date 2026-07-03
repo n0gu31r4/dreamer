@@ -13,7 +13,13 @@ Status legend: ☐ planned · ◐ in progress / drafted-unproven · ☑ done
 | `bootstrap` | ◐ drafted, unproven | new-game's ~24-commit history + doc trio | The from-zero master procedure: scaffold → doc trio → milestone loop → eval leg → prototype. Cold-tested by trial #1. |
 | `milestone-loop` | ☐ | — | Currently inline as bootstrap Phase 2. Distill into its own skill (and a `/milestone` command) after trial #1 grades it. |
 | `visual-eval` | ☐ | new-game (Phase 3, not built) | Screenshot harness + vision review; UI-bot flow tests. Prototype of the art-evaluation leg. |
-| `asset-pipeline` | ☐ | — | Style bible, generation client, post-processing, import config. Gated on visual-eval (eyes before art). |
+| `asset-pipeline` | ☐ | — | Skill not distilled (needs lab proof), but **v1 offline core code exists** in `asset_pipeline/` — pulled forward 2026-07-02 by human decision (see Dreamer code below). Vision-QA slot stubbed; "eyes before art" satisfied by deterministic checks until visual-eval lands. |
+
+## Dreamer code (`asset_pipeline/`, gate: `tools/check.sh`)
+
+- ◐ **Milestone 1 — offline core** (2026-07-02): style-bible + manifest/ledger schemas, deterministic post-processing (NN scale, palette quantize, alpha snap), check suite (dimensions, transparency, palette, grid), provider protocol + local-file provider, bounded regenerate-with-feedback runner, stubbed vision-judge interface. 35 tests, gate green. Drafted-unproven: no lab has consumed it yet.
+- ☐ **Milestone 2 — first live provider**: OpenAI `gpt-image-1` client (native alpha; *not* `gpt-image-2` — rejects transparency) + Godot import config + `--live` smoke script (excluded from gate). Pixel-art specialist provider (Retro Diffusion / PixelLab) after that; Grok deferred until fan-out.
+- ☐ **Lab proof**: run the pipeline against a real lab's GDD; only then distill `skills/asset-pipeline/`.
 
 ## Orchestrator
 
@@ -29,6 +35,7 @@ Status legend: ☐ planned · ◐ in progress / drafted-unproven · ☑ done
 ## Near-term sequence
 
 1. ☑ ~~Draft the kickstart machinery~~ — `skills/gdd/` + `skills/bootstrap/` (2026-06-12).
+1b. ☑ ~~Asset-pipeline milestone 1 (offline core)~~ — pulled forward by human decision (2026-07-02); parallel track, does not displace trial #1 as the next dreamer-level step.
 2. **Pre-trial check on the GDD input** — run new-game's `GAME_DESIGN.md` through the conformance check; fix the input (notably the missing §10 difficulty-intent section), not the game.
 3. **Trial #1** — fresh repo, clean context, run the bootstrap. Human plays taste-oracle per the procedure; grade afterwards against the control.
 4. **Post-trial distillation** — fold lessons into the skills; promote ◐ labels that survived; distill `milestone-loop` standalone.

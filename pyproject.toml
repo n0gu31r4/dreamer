@@ -1,0 +1,19 @@
+[project]
+name = "asset-pipeline"
+version = "0.1.0"
+description = "Dreamer's asset pipeline: manifest-driven 2D asset generation, post-processing, and verification"
+requires-python = ">=3.11"
+dependencies = ["Pillow>=10"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["asset_pipeline", "asset_pipeline.providers"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

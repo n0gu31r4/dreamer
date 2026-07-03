@@ -10,6 +10,7 @@ Engine target: Godot. It's the most agent-automatable engine — `.tscn`/`.tres`
 - `PLAN.md` — roadmap and statuses (moves with every working session).
 - `CLAUDE.md` — how we develop here: the working agreement and conventions.
 - `skills/` — the skill library: one directory per skill, `skills/<name>/{knowledge,prompt}.md`.
+- `asset_pipeline/` + `tests/` — dreamer's first product code: the asset pipeline (see §5); gated by `tools/check.sh`.
 - Labs are **sibling repos** (e.g. `../new-game/` — lab #1), each with its own plan and conventions.
 
 ## The core insight: it's a feedback loop, not a generator
@@ -55,9 +56,15 @@ The proven half: script/scene/resource load checks, boot checks, unit tests over
 
 The open half: **visual evaluation** — screenshot harness reviewed by vision against per-scene checklists, and UI-bot flow tests walking the real menu graph. This is lab #1's Phase 3 and the prototype of the art-evaluation leg.
 
-### 5. Asset pipeline ☐
+### 5. Asset pipeline ◐
 
-Image/audio generation is the easy half; the hard half is **consistency** — generation tools are stateless but a game needs one coherent style. Needs: a versioned "style bible" (palette, reference sheets, prompt fragments) threaded through every generation call; post-processing automation (background removal, sprite-sheet slicing, palette enforcement); automatic Godot import configuration; a manifest tracing spec → asset → usage.
+Image/audio generation is the easy half; the hard half is **consistency** — generation tools are stateless but a game needs one coherent style. The design decisions (2026-07-02):
+
+- **Claude is the eyes, never the hands.** Anthropic models don't generate images; Claude's roles are orchestration, style-bible/prompt compilation, and vision QA. Pixel generation is provider-pluggable.
+- **Deterministic-first hierarchy:** every measurable property (palette conformance, alpha, dimensions, grid) is a code assert in the gate; vision judges only the residue (style match, silhouette readability); regeneration is the last resort.
+- **Providers per asset class:** pixel-art specialists (Retro Diffusion / PixelLab) for sprites & animation; OpenAI `gpt-image-1` for general 2D (native transparent background — `gpt-image-2` rejects transparency, don't use it for assets); Grok Imagine deferred until fan-out variant generation makes its per-image price matter; local Flux+LoRA only if scale ever demands it.
+
+Built (offline core, `asset_pipeline/`, tested but unproven in a lab): versioned style bible + asset manifest/ledger schemas, deterministic post-processing (nearest-neighbor scale, palette quantization, alpha snap), check suite, provider protocol with a local-file provider, bounded regenerate-with-feedback runner, and a stubbed vision-judge interface for the visual-eval leg to fill. Open: live providers, Godot import config, real vision QA, audio, lab proof.
 
 ### 6. Project memory & ledger ◐
 
@@ -82,7 +89,7 @@ Promote what the lab proved; add exactly one new layer (the orchestrator), in tw
   - *Stage 1 (now):* Claude Code itself — skills/commands/hooks in the lab repos; the `/milestone` loop is just a command. Zero new infrastructure; running it human-triggered teaches us what the real orchestrator must handle.
   - *Stage 2 (when loops run unattended or fan out):* Python + the Claude Agent SDK — sessions spawned programmatically, gate as the brake, budgets, resumability, parallel fan-out over variants compared via the deterministic harness.
   - No agent frameworks (LangGraph, CrewAI, …): Claude Code already is the agent harness, and dreamer's control flow is simple deterministic code.
-- **Assets:** Python; image-gen APIs behind one provider-agnostic client (providers churn; the style-bible threading and post-processing are the durable parts).
+- **Assets:** Python (`asset_pipeline/`, uv-managed, gated by `tools/check.sh`); image-gen APIs behind one provider-agnostic client (providers churn; the style-bible threading and post-processing are the durable parts).
 - **State:** git + markdown ledgers in-repo; JSON for machine outputs. No database until fan-out volumes force one.
 
 ## Scope decisions
