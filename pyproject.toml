@@ -7,6 +7,9 @@ dependencies = ["Pillow>=10"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# `live` pulls the OpenAI SDK for scripts/smoke_live.py only. Kept out of the
+# gate (which syncs `dev`) so verification stays offline and dependency-light.
+live = ["openai>=1.0"]
 
 [build-system]
 requires = ["setuptools>=68"]

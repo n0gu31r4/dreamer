@@ -18,7 +18,7 @@ Status legend: ☐ planned · ◐ in progress / drafted-unproven · ☑ done
 ## Dreamer code (`asset_pipeline/`, gate: `tools/check.sh`)
 
 - ◐ **Milestone 1 — offline core** (2026-07-02): style-bible + manifest/ledger schemas, deterministic post-processing (NN scale, palette quantize, alpha snap), check suite (dimensions, transparency, palette, grid), provider protocol + local-file provider, bounded regenerate-with-feedback runner, stubbed vision-judge interface. 35 tests, gate green. Drafted-unproven: no lab has consumed it yet.
-- ☐ **Milestone 2 — first live provider**: OpenAI `gpt-image-1` client (native alpha; *not* `gpt-image-2` — rejects transparency) + Godot import config + `--live` smoke script (excluded from gate). Pixel-art specialist provider (Retro Diffusion / PixelLab) after that; Grok deferred until fan-out.
+- ◐ **Milestone 2 — first live provider** (2026-07-03): OpenAI `gpt-image-1.5` provider (native alpha; **1.5 not `gpt-image-2`** — 2 dropped transparency support; 1.5 chosen over the plan's original `gpt-image-1` because it keeps alpha *and* is newer/better) + Godot pixel-art `.import` sidecars (`godot_import.py`) + `--live` smoke script (`scripts/smoke_live.py`, excluded from gate; needs `--extra live` + `OPENAI_API_KEY`). 48 tests, gate green. Drafted-unproven: the offline path is fully tested, but the live API call and the in-Godot import haven't been exercised yet (no key here, no engine) — first real run is a human playtest. Pixel-art specialist provider (Retro Diffusion / PixelLab) after that; Grok deferred until fan-out.
 - ☐ **Lab proof**: run the pipeline against a real lab's GDD; only then distill `skills/asset-pipeline/`.
 
 ## Orchestrator
