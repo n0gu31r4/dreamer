@@ -48,6 +48,7 @@ def run_asset(
             attempts.append(record)
             break
 
+        record["provider"] = result.provider  # concrete generator (routing-visible)
         record["prompt"] = result.prompt
         record["meta"] = result.meta
 

@@ -13,11 +13,12 @@ only. `providers`, `postprocess`, `checks`, `qa`, `pipeline` are internal
 implementation and may change without notice — the orchestrator never constructs
 a provider or a judge itself; `Studio.default(...)` does that for it.
 
-Provider routing (☐ INTENT): per-asset-class routing — pixel-art sprites and
-animation to the local SDXL specialist, backgrounds/UI to gpt-image-1.5 — lands
-with the `local_sd` provider (Milestone 3). Today a Studio runs one configured
-provider for every asset; when a second real generator exists, routing becomes a
-`_provider_for(spec)` seam inside this class, invisible to the caller.
+Provider routing (◐ built, Milestone 3): per-asset-class routing — pixel-art
+sprites to the local SDXL specialist (`local_sd`), backgrounds/UI/everything else
+to gpt-image-1.5 — is `Studio.routed(...)`, which builds an internal
+`CategoryRouter` (a `spec.category -> provider` map with a default). The router
+is itself a `Provider`, so the pipeline is unchanged and the caller still sees
+one Studio. `Studio.default(name)` remains for driving a single provider.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from pathlib import Path
 from .manifest import Manifest
 from .pipeline import run_manifest
 from .providers import Provider
+from .providers.router import CategoryRouter
 from .qa import StubJudge, VisionJudge
 from .style_bible import StyleBible
 
@@ -77,12 +79,36 @@ class Studio:
         """Build a Studio for a named provider without importing providers directly.
 
         `"openai"` -> gpt-image-1.5, the general-2D generator (needs
-        OPENAI_API_KEY, spends money per image); `"local"` -> the local-file
-        provider that reads pre-made PNGs from `directory=...` (offline, for
-        tests and hand-drawn assets). `"local_sd"` (pixel-art specialist) arrives
-        with Milestone 3.
+        OPENAI_API_KEY, spends money per image); `"local_sd"` -> the local SDXL +
+        Pixel Art XL specialist (needs a ComfyUI server on host:port); `"local"`
+        -> the local-file provider that reads pre-made PNGs from `directory=...`
+        (offline, for tests and hand-drawn assets). For automatic per-class
+        routing across providers, use `Studio.routed(...)`.
         """
         return cls(_build_provider(provider, **provider_opts))
+
+    @classmethod
+    def routed(
+        cls,
+        *,
+        sprite: str = "local_sd",
+        generalist: str = "openai",
+        sprite_opts: dict | None = None,
+        generalist_opts: dict | None = None,
+        **studio_opts,
+    ) -> "Studio":
+        """Build a Studio that routes by asset class: sprites to the pixel-art
+        specialist, everything else (backgrounds, UI, tilesets) to the generalist.
+
+        Both sub-providers are constructed here — the caller names them but never
+        imports them. `sprite_opts`/`generalist_opts` pass through to each (e.g.
+        `sprite_opts={"host": "127.0.0.1", "port": 8188}`). The two providers are
+        wrapped in a `CategoryRouter`, which the Studio drives like any provider.
+        """
+        specialist = _build_provider(sprite, **(sprite_opts or {}))
+        general = _build_provider(generalist, **(generalist_opts or {}))
+        router = CategoryRouter(routes={"sprite": specialist}, default=general)
+        return cls(router, **studio_opts)
 
     def produce(
         self, manifest: Manifest, bible: StyleBible, out_dir: str | Path
@@ -108,6 +134,10 @@ def _build_provider(name: str, **opts) -> Provider:
         from .providers.openai_image import OpenAIImageProvider
 
         return OpenAIImageProvider(**opts)
+    if key == "local_sd":
+        from .providers.local_sd import LocalSDProvider
+
+        return LocalSDProvider(**opts)
     if key == "local":
         from .providers.local import LocalFileProvider
 
@@ -116,4 +146,4 @@ def _build_provider(name: str, **opts) -> Provider:
         except KeyError:
             raise ValueError("local provider needs directory=<path to pre-made PNGs>")
         return LocalFileProvider(directory, **opts)
-    raise ValueError(f"unknown provider {name!r}; known: 'openai', 'local'")
+    raise ValueError(f"unknown provider {name!r}; known: 'openai', 'local_sd', 'local'")
