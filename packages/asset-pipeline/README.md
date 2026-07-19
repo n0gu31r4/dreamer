@@ -77,4 +77,4 @@ uv run --package asset-pipeline --extra live python packages/asset-pipeline/scri
 
 ## Status
 
-See `../../PLAN.md` (Dreamer code → asset pipeline) for milestone tracking. Short version: offline core + boundary facade built and tested; both live providers (`gpt-image-1.5` generalist, `local_sd` SDXL specialist with rembg alpha) exercised live and passing the deterministic checks; per-class routing built. Open: sprite-scale quality tuning (taste call), in-Godot import verification (no engine here), real vision QA, and lab proof — no lab has consumed the pipeline yet.
+See `../../PLAN.md` (Dreamer code → asset pipeline) for milestone tracking. Short version: offline core + boundary facade built and tested; both live providers (`gpt-image-1.5` generalist, `local_sd` SDXL specialist with rembg alpha) exercised live and passing the deterministic checks; per-class routing built; in-Godot import verification passed (2026-07-19, Godot 4.6.3 headless — sidecars accepted, textures load). Open: sprite-scale quality tuning (taste call), real vision QA, and lab proof — no lab has consumed the pipeline yet.
