@@ -2,6 +2,14 @@ version = 1
 revision = 3
 requires-python = ">=3.11"
 
+[manifest]
+members = [
+    "asset-pipeline",
+]
+
+[manifest.dependency-groups]
+dev = [{ name = "pytest", specifier = ">=8" }]
+
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -27,15 +35,12 @@ wheels = [
 [[package]]
 name = "asset-pipeline"
 version = "0.1.0"
-source = { editable = "." }
+source = { editable = "packages/asset-pipeline" }
 dependencies = [
     { name = "pillow" },
 ]
 
 [package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-]
 live = [
     { name = "openai" },
 ]
@@ -44,9 +49,8 @@ live = [
 requires-dist = [
     { name = "openai", marker = "extra == 'live'", specifier = ">=1.0" },
     { name = "pillow", specifier = ">=10" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
 ]
-provides-extras = ["dev", "live"]
+provides-extras = ["live"]
 
 [[package]]
 name = "certifi"

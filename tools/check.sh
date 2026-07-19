@@ -7,6 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 export PATH="$HOME/.local/bin:$PATH"
-uv sync --quiet --extra dev
-uv run python -m pytest -q
+# Workspace-wide: sync every member editable (+ the dev group) and test them all.
+uv sync --quiet --all-packages
+uv run python -m pytest -q packages/asset-pipeline
 echo "GATE GREEN"

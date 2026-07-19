@@ -1,22 +1,11 @@
-[project]
-name = "asset-pipeline"
-version = "0.1.0"
-description = "Dreamer's asset pipeline: manifest-driven 2D asset generation, post-processing, and verification"
-requires-python = ">=3.11"
-dependencies = ["Pillow>=10"]
+# Dreamer is a uv workspace (monorepo). This root is a *virtual* workspace root:
+# it ships no product code itself — product packages live under packages/<name>/,
+# each with its own pyproject, tests, and README. The first member is the asset
+# pipeline; the Python orchestrator (Stage 2, see README §Stack) joins later as a
+# second member. tools/check.sh is the workspace-wide gate.
+[tool.uv.workspace]
+members = ["packages/*"]
 
-[project.optional-dependencies]
+# Workspace-wide dev tooling, shared by every member. `uv sync` installs it by default.
+[dependency-groups]
 dev = ["pytest>=8"]
-# `live` pulls the OpenAI SDK for scripts/smoke_live.py only. Kept out of the
-# gate (which syncs `dev`) so verification stays offline and dependency-light.
-live = ["openai>=1.0"]
-
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-packages = ["asset_pipeline", "asset_pipeline.providers"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]

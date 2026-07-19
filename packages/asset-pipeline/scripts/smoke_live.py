@@ -2,10 +2,11 @@
 """Live smoke test for the gpt-image-1.5 provider. NOT part of the gate.
 
 Spends real money: generates one image via the OpenAI API. Run it yourself
-when you want to confirm the live path end to end:
+when you want to confirm the live path end to end, from the workspace root:
 
-    uv sync --extra live
-    OPENAI_API_KEY=sk-... uv run python scripts/smoke_live.py [OUT_DIR]
+    set -a; . ./.env; set +a   # load OPENAI_API_KEY
+    uv run --package asset-pipeline --extra live \
+        python packages/asset-pipeline/scripts/smoke_live.py [OUT_DIR]
 
 It runs one sprite through the full loop (generate -> postprocess -> checks ->
 stub vision judge), writes the PNG plus its Godot `.import` sidecar into

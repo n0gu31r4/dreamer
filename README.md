@@ -10,7 +10,7 @@ Engine target: Godot. It's the most agent-automatable engine — `.tscn`/`.tres`
 - `PLAN.md` — roadmap and statuses (moves with every working session).
 - `CLAUDE.md` — how we develop here: the working agreement and conventions.
 - `skills/` — the skill library: one directory per skill, `skills/<name>/{knowledge,prompt}.md`.
-- `asset_pipeline/` + `tests/` — dreamer's first product code: the asset pipeline (see §5); gated by `tools/check.sh`.
+- `packages/` — uv **workspace** members (dreamer is a monorepo; the repo root is a virtual workspace root). First member: `packages/asset-pipeline/` — dreamer's first product code, an isolated black-box package with its own `pyproject.toml`, tests, and README (see §5); gated workspace-wide by `tools/check.sh`.
 - Labs are **sibling repos** (e.g. `../new-game/` — lab #1), each with its own plan and conventions.
 
 ## The core insight: it's a feedback loop, not a generator
@@ -58,13 +58,14 @@ The open half: **visual evaluation** — screenshot harness reviewed by vision a
 
 ### 5. Asset pipeline ◐
 
-Image/audio generation is the easy half; the hard half is **consistency** — generation tools are stateless but a game needs one coherent style. The design decisions (2026-07-02):
+Image/audio generation is the easy half; the hard half is **consistency** — generation tools are stateless but a game needs one coherent style. It's an **isolated package (`packages/asset-pipeline/`, a member of dreamer's uv workspace) with its own `pyproject.toml`, tests, and README, treated as a black box**: asset requests in, checked assets out; the orchestrator asks for art without knowing anything about image generation. The design decisions (2026-07-02, provider choice updated 2026-07-04):
 
 - **Claude is the eyes, never the hands.** Anthropic models don't generate images; Claude's roles are orchestration, style-bible/prompt compilation, and vision QA. Pixel generation is provider-pluggable.
 - **Deterministic-first hierarchy:** every measurable property (palette conformance, alpha, dimensions, grid) is a code assert in the gate; vision judges only the residue (style match, silhouette readability); regeneration is the last resort.
-- **Providers per asset class:** pixel-art specialists (Retro Diffusion / PixelLab) for sprites & animation; OpenAI `gpt-image-1.5` for general 2D (native transparent background — its successor `gpt-image-2` is stronger on text/resolution but *dropped* transparency support, so it's unusable for cutout assets; `gpt-image-1.5` keeps alpha and is the current pin); Grok Imagine deferred until fan-out variant generation makes its per-image price matter; local Flux+LoRA only if scale ever demands it.
+- **Structured contract, not an open prompt.** The box's front door is `Studio.produce(manifest, bible) -> report` — structured `AssetSpec`s in, checkable results out. Free-form prompts live *inside* (prompt compilation is an implementation detail); an open natural-language interface would defeat the deterministic gate. Provider selection and per-class routing are hidden behind the facade — the caller never constructs a provider.
+- **Providers per asset class:** a **local SDXL + Pixel Art XL LoRA specialist** for pixel-art sprites & animation — installed and proven on the dev box (2026-07-04), free + spammable (what Stage-2 fan-out needs) and crisper than a downscale; OpenAI `gpt-image-1.5` as the general-2D generalist for backgrounds/UI/large assets (native transparent background — its successor `gpt-image-2` is stronger on text/resolution but *dropped* transparency support, so it's unusable for cutout assets; `gpt-image-1.5` keeps alpha and is the current pin); Grok Imagine deferred until fan-out variant generation makes its per-image price matter. **This reverses the earlier plan** of hosted specialists (Retro Diffusion / PixelLab) with "local only if scale demands" — local is now the specialist of record.
 
-Built (offline core, `asset_pipeline/`, tested but unproven in a lab): versioned style bible + asset manifest/ledger schemas, deterministic post-processing (nearest-neighbor scale, palette quantization, alpha snap), check suite, provider protocol with a local-file provider, bounded regenerate-with-feedback runner, and a stubbed vision-judge interface for the visual-eval leg to fill. Also built: the first live provider (`gpt-image-1.5`, transparency-aware, generated at a valid API size then downscaled) and Godot pixel-art `.import` sidecars — both offline-tested but not yet exercised against the real API or inside Godot. Open: real vision QA, pixel-art specialist provider, audio, lab proof.
+Built (offline core, `packages/asset-pipeline/`, tested but unproven in a lab): versioned style bible + asset manifest/ledger schemas, deterministic post-processing (nearest-neighbor scale, palette quantization, alpha snap), check suite, provider protocol with a local-file provider, bounded regenerate-with-feedback runner, a stubbed vision-judge interface for the visual-eval leg to fill, and the `Studio` facade that seals all of this behind the public boundary. Also built: the first live provider (`gpt-image-1.5`, transparency-aware, generated at a valid API size then downscaled) and Godot pixel-art `.import` sidecars — both offline-tested but not yet exercised against the real API or inside Godot. Open: the local SDXL specialist provider (`local_sd.py` + rembg alpha step), real vision QA, per-class routing, audio, lab proof.
 
 ### 6. Project memory & ledger ◐
 
@@ -89,7 +90,7 @@ Promote what the lab proved; add exactly one new layer (the orchestrator), in tw
   - *Stage 1 (now):* Claude Code itself — skills/commands/hooks in the lab repos; the `/milestone` loop is just a command. Zero new infrastructure; running it human-triggered teaches us what the real orchestrator must handle.
   - *Stage 2 (when loops run unattended or fan out):* Python + the Claude Agent SDK — sessions spawned programmatically, gate as the brake, budgets, resumability, parallel fan-out over variants compared via the deterministic harness.
   - No agent frameworks (LangGraph, CrewAI, …): Claude Code already is the agent harness, and dreamer's control flow is simple deterministic code.
-- **Assets:** Python (`asset_pipeline/`, uv-managed, gated by `tools/check.sh`); image-gen APIs behind one provider-agnostic client (providers churn; the style-bible threading and post-processing are the durable parts).
+- **Assets:** Python (`packages/asset-pipeline/`, a uv-workspace member, gated by `tools/check.sh`); image-gen APIs behind one provider-agnostic client (providers churn; the style-bible threading and post-processing are the durable parts).
 - **State:** git + markdown ledgers in-repo; JSON for machine outputs. No database until fan-out volumes force one.
 
 ## Scope decisions
