@@ -41,6 +41,8 @@ generate (provider) -> post-process (code) -> deterministic checks (code)
 
 **Deterministic-first:** every measurable property (palette, alpha, dimensions, grid) is a code assert; the vision judge only rules on the residue (style match, silhouette readability). The judge is a no-op stub today — deterministic checks are the only real eyes in v1 until the visual-eval leg lands.
 
+**Sizing & palette (what makes output read as pixel art).** Both these live in the caller's inputs, not the box, and they dominate perceived quality. Providers generate at ~1024px; `postprocess` then nearest-neighbor downscales to `AssetSpec.size` and snaps to the **fixed** `StyleBible.palette` (the snap is what makes palette conformance a deterministic gate). Two lessons from the 2026-07-19 smoke runs: (1) **size** — a detailed character needs ~96–128px; at 32×32 the centered, cut-out subject fills ~15px and reads as a blob. (2) **palette** — 6 colors is too few; it collapses a shaded sprite to mud at *every* size. Use a real limited palette (~16–32 colors, e.g. DawnBringer-16). The smoke scripts now demo 96×96 + DB16. (A richer *fixed* palette keeps the gate and cross-asset consistency; per-image *adaptive* palettes would look great but break both — a deferred design fork.)
+
 ## Providers per asset class
 
 The box routes by asset class. **Routing is ◐ built** (`Studio.routed(...)` → an internal `CategoryRouter`, a `spec.category → provider` map with a default): sprites go to the `local_sd` specialist, everything else (backgrounds, UI, tilesets) to the `gpt-image` generalist. The router is itself a `Provider`, so the pipeline is unchanged and the concrete generator lands in each asset's provenance. `Studio.default(name)` still drives a single provider.

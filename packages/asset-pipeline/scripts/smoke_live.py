@@ -30,10 +30,20 @@ from asset_pipeline.providers.openai_image import OpenAIImageProvider
 from asset_pipeline.qa import StubJudge
 from asset_pipeline.style_bible import StyleBible
 
+# DawnBringer 16 — a classic, versatile 16-color pixel-art palette (greens,
+# browns, greys, skin, red, dark outline). A 6-color palette is too small to
+# hold a detailed character; 16 keeps the "limited palette" look while letting
+# a sprite actually read. See the package README note on size + palette.
+DB16 = (
+    "#140C1C", "#442434", "#30346D", "#4E4A4E", "#854C30", "#346524",
+    "#D04648", "#757161", "#597DCE", "#D27D2C", "#8595A1", "#6DAA2C",
+    "#D2AA99", "#6DC2CA", "#DAD45E", "#DEEED6",
+)
+
 BIBLE = StyleBible(
     name="smoke",
     version=1,
-    palette=("#2E3440", "#BF616A", "#A3BE8C", "#EBCB8B", "#88C0D0", "#D8DEE9"),
+    palette=DB16,
     grid=16,
     background="transparent",
     prompt_fragments={
@@ -42,10 +52,12 @@ BIBLE = StyleBible(
     },
 )
 
+# 96x96: a detailed-sprite size that actually holds a character. At 32x32 the
+# cut-out subject fills ~15px and reads as a blob — too small for a hero sprite.
 SPEC = AssetSpec(
     id="smoke_goblin",
     category="sprite",
-    size=(32, 32),
+    size=(96, 96),
     description="a small friendly green goblin with a wooden club",
 )
 
