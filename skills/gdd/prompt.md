@@ -43,7 +43,9 @@ Round 1 is always the load-bearing four, each with a proposed default:
 - the **completable v1** (what does winning a run mean, and how big is one run?),
 - the **signature mechanic** (the one divergence from the anchor that makes it theirs),
 - the **scope fence** (what's explicitly NOT in v1).
-Then iterate: draft → show → next batch of questions, narrowing to details (inputs,
+Then iterate: draft → show → next batch of questions, narrowing to details (inputs —
+including which physical device(s) the human will actually playtest on; the primary
+device is a LOCKED part of the input map, never a silently assumed default —
 inventories, progression feel, earn/spend economy closure — for each level-up/shop/unlock
 loop, what one choice concretely grants and from what pool — and difficulty intent: who's
 the player, how hard should it feel?). Capture taste remarks ("I like it frantic") as difficulty/feel intent, not as

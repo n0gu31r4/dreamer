@@ -77,6 +77,13 @@ Typed GDScript · content as `.tres` resources (add a weapon/enemy = data, not c
 signals over polling · collision layers named by role · theme-agnostic systems code ·
 all gameplay numbers in data/exported vars.
 
+One more, ☐ INTENT (2026-07-19, from lab #2's device catch, not yet lab-proven): **input
+read only through named input actions** (Godot: Input Map + runtime `InputMap` API), each
+action bound for every supported device in the same commit that creates it — never raw
+keycodes in scripts. Keys must always stay flexible: games eventually need configurable
+bindings, and action indirection makes device switching and a future rebinding UI a
+data/UI concern instead of a combat-code retrofit.
+
 ## Gotchas to pre-seed into a new lab's CLAUDE.md  ✅
 
 All bitten and documented in lab #1; they are engine-general (Godot 4.x), not

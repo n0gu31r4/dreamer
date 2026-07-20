@@ -57,7 +57,15 @@ Eleven sections. Lab-#1 evidence for each is noted; #10 is the one addition the 
    loop, and every system traces to an arrow in it.
 6. **Player verbs & full input map** — the signature mechanic(s) and the complete control
    scheme, with a closure statement (lab: "That's the entire control scheme. No aim
-   input."). Closure is what made M1 ambiguity-free.
+   input."). Closure is what made M1 ambiguity-free. The map must also name its
+   **devices** — which physical device(s) the human playtests on, primary explicit. This
+   is a human-preference fact the interview must elicit, not default: the human is the
+   feel-oracle at every milestone, so the build's primary scheme must be the device they
+   actually hold *(added 2026-07-19 from lab #2: the interview defaulted to
+   keyboard-first while the human plays this genre on gamepad)*. Bindings themselves stay
+   flexible — assume engine input-action indirection (consume named actions, never raw
+   keycodes) so device dual-binding and an eventual rebinding UI are data/UI concerns,
+   not code changes.
 7. **System rules** — per system (combat, progression, economy…), rules precise enough to
    implement, numbers as TUNABLE ranges. Subtle rules MUST be written down even when short:
    lab's one-sentence "XP and materials are decoupled" defined the entire economy and the
@@ -107,7 +115,8 @@ A GDD is *buildable* when:
   grants, from what pool, and how the loops interact — stated rules pass; prose
   implication fails *(added 2026-07-19 from lab #2's cold run: a draft passed every other
   check while leaving the level-up choice pool unstated)*;
-- the input map has a closure statement;
+- the input map has a closure statement and names its device(s), primary playtest device
+  explicit;
 - the backlog fence exists;
 - no stray ambiguity outside the ledger (scan for "TBD", "maybe", "?", "we'll see").
 
