@@ -103,6 +103,10 @@ A GDD is *buildable* when:
 - win/lose conditions are mechanically testable;
 - every number is LOCKED or ranged-TUNABLE;
 - every inventory table is closed (complete for v1, or rows marked DEFERRED);
+- every earn/spend loop is closed (level-ups, shop, unlocks): what one choice concretely
+  grants, from what pool, and how the loops interact — stated rules pass; prose
+  implication fails *(added 2026-07-19 from lab #2's cold run: a draft passed every other
+  check while leaving the level-up choice pool unstated)*;
 - the input map has a closure statement;
 - the backlog fence exists;
 - no stray ambiguity outside the ledger (scan for "TBD", "maybe", "?", "we'll see").

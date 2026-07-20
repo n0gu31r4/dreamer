@@ -9,7 +9,7 @@ Status legend: ☐ planned · ◐ in progress / drafted-unproven · ☑ done
 | Skill | Status | Evidence base | Notes |
 |---|---|---|---|
 | `evaluation` | ☑ distilled | new-game (built & battle-tested) | Measurement harness + regression gate. Core PROVEN; visual/pacing/π_human parts still INTENT. |
-| `gdd` | ◐ drafted, unproven | new-game's GDD reviewed against its build history | Template + decision-status vocabulary (LOCKED/TUNABLE/OPEN/DEFERRED) + HITL co-authoring procedure. Cold-tested by trial #1. |
+| `gdd` | ◐ first cold run passed | new-game GDD review + **lab #2 interview (2026-07-19, first cold execution)** | Template + decision-status vocabulary + HITL co-authoring. Cold run produced a conformant, buildable GDD (Sonnet, ~90k ctx); one gap found in review — level-up economy unstated — folded back into the conformance check + interview. Promotion awaits the build consuming it + trial #1. |
 | `bootstrap` | ◐ drafted, unproven | new-game's ~24-commit history + doc trio | The from-zero master procedure: scaffold → doc trio → milestone loop → eval leg → prototype. Cold-tested by trial #1. |
 | `milestone-loop` | ☐ | — | Currently inline as bootstrap Phase 2. Distill into its own skill (and a `/milestone` command) after trial #1 grades it. |
 | `visual-eval` | ☐ | new-game (Phase 3, not built) | Screenshot harness + vision review; UI-bot flow tests. Prototype of the art-evaluation leg. |

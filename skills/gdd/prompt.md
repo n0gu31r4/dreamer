@@ -44,8 +44,9 @@ Round 1 is always the load-bearing four, each with a proposed default:
 - the **signature mechanic** (the one divergence from the anchor that makes it theirs),
 - the **scope fence** (what's explicitly NOT in v1).
 Then iterate: draft → show → next batch of questions, narrowing to details (inputs,
-inventories, progression feel, difficulty intent — who's the player, how hard should it
-feel?). Capture taste remarks ("I like it frantic") as difficulty/feel intent, not as
+inventories, progression feel, earn/spend economy closure — for each level-up/shop/unlock
+loop, what one choice concretely grants and from what pool — and difficulty intent: who's
+the player, how hard should it feel?). Capture taste remarks ("I like it frantic") as difficulty/feel intent, not as
 mechanics.
 
 ### 3. Draft
