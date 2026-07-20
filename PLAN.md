@@ -25,19 +25,21 @@ Status legend: ☐ planned · ◐ in progress / drafted-unproven · ☑ done
 
 ## Orchestrator
 
-- ◐ **Stage 1 — Claude Code native.** The pipeline IS the skill prompts, human-launched: `gdd/prompt.md` (step 0, HITL) → `bootstrap/prompt.md` (scaffold + milestone loop + eval handoff). Drafted; trial #1 is its first execution.
+- ◐ **Stage 1 — Claude Code native.** The pipeline IS the skill prompts, human-launched: `gdd/prompt.md` (step 0, HITL) → `bootstrap/prompt.md` (scaffold + milestone loop + eval handoff). Drafted; first execution is lab #2 (pulled ahead of trial #1 by human decision). Packaged as a **lab starter kit** (2026-07-19): `tools/bootstrap_game.sh <dir>` copies a `skills/` snapshot + a state-detecting `/kickstart` command (`lab-template/.claude/`) into a fresh lab — one entry point, the agent routes itself (no GDD → HITL interview; GDD → bootstrap Phase 0; doc trio → resume milestone loop). Conventions (also in CLAUDE.md): labs run from their snapshot; lab sessions default to Sonnet, dreamer-level work stays on Fable/Opus; one session per milestone, ending at the hand-back.
 - ☐ **Stage 2 — Python + Claude Agent SDK.** Sessions spawned programmatically, budgets, resumability, fan-out over variants compared via the deterministic harness. Only after Stage 1's trials teach us what it must handle.
 
 ## Labs & trials
 
 - ◐ **Lab #1 — `../new-game/`** (top-down arena survival roguelite). Built interactively (human + Opus); harness + gate live here. New role since 2026-06-12: **the control** — the human+agent-built baseline that automated builds are graded against — and host for mature-game legs (visual eval, closed-loop tuning, π_human; see its `AUTOMATION_PLAN.md`).
+- ◐ **Lab #2 — `../element-bending-arena/`** (Brotato-inspired arena survival roguelite, smaller scope; Avatar: The Last Airbender-style element-bending theme — 4 bender characters + elemental equipment). Kicked off 2026-07-19 **by human decision, ahead of trial #1**: a from-scratch GDD via `skills/gdd/` + cold `skills/bootstrap/` execution, driven through the lab starter kit. Tests the same skills as trial #1 but **without** control grading, and same genre as lab #1 (so it doesn't test genre generalization either — those goals stay with trial #1 / lab #3 below).
 - ☐ **Trial #1 — replicate new-game from its own GDD.** Fresh sibling repo; inputs = new-game's `GAME_DESIGN.md` + dreamer skills, **no peeking at the control**. Tests, in one run: the GDD template's sufficiency, cold re-execution of the evaluation skill, and the bootstrap procedure end to end. Graded against the control: milestones reached, escalations, doc quality, divergence, cost.
-- ☐ **Lab #2 — new genre.** After trial #1: a different game shape from a *new* GDD (authored via `skills/gdd/prompt.md`), to force generalization beyond the roguelite.
+- ☐ **Lab #3 — new genre.** After trial #1: a different game shape from a *new* GDD (authored via `skills/gdd/prompt.md`), to force generalization beyond the roguelite.
 
 ## Near-term sequence
 
 1. ☑ ~~Draft the kickstart machinery~~ — `skills/gdd/` + `skills/bootstrap/` (2026-06-12).
 1b. ☑ ~~Asset-pipeline milestone 1 (offline core)~~ — pulled forward by human decision (2026-07-02); parallel track, does not displace trial #1 as the next dreamer-level step.
+1c. ◐ **Lab #2 (element-bending-arena)** — human decision 2026-07-19: run a from-scratch lab now via the starter kit (GDD interview → bootstrap → milestone loop). Reorders the sequence; trial #1 stays on the roadmap after it.
 2. **Pre-trial check on the GDD input** — run new-game's `GAME_DESIGN.md` through the conformance check; fix the input (notably the missing §10 difficulty-intent section), not the game.
 3. **Trial #1** — fresh repo, clean context, run the bootstrap. Human plays taste-oracle per the procedure; grade afterwards against the control.
 4. **Post-trial distillation** — fold lessons into the skills; promote ◐ labels that survived; distill `milestone-loop` standalone.
