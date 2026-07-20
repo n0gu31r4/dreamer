@@ -392,7 +392,7 @@ without a gate has no brakes).
 | # | Check | Mechanism | Catches |
 |---|-------|-----------|---------|
 | 0 | **Import** | `godot --headless --import` | stale class cache (B7) — run it first, always |
-| 1 | **Load** | walk `res://`, `load()` every `.gd`/`.tscn`/`.tres`; fail on null or non-compiling script | parse errors, broken scene/resource references, bad data edits — including *cascades* (one broken `.tres` fails every script that preloads it) |
+| 1 | **Load** | walk `res://`, `load()` every `.gd`/`.tscn`/`.tres`; fail on null or non-compiling script. Mechanism note (lab #2, teeth-verified): a broken GDScript still `load()`s as a **non-null** object — Godot only logs the parse error — so a null-check alone has no teeth; call `can_instantiate()` on every loaded `GDScript` to actually catch it | parse errors, broken scene/resource references, bad data edits — including *cascades* (one broken `.tres` fails every script that preloads it) |
 | 2 | **Boot** | `godot --headless --quit-after 1` | autoload/startup crashes |
 | 3 | **Unit** | a headless `SceneTree` script exercising the game's pure-logic core via its real APIs | logic regressions in economy/loadout/leveling math |
 | 4 | **Balance** | full harness batch (N seeded runs/policy) + a small assert script over its JSON | tuning drift, broken collisions (Λ→0), difficulty regressions |

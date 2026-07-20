@@ -27,6 +27,10 @@ test it".
   escalate before building on them.
 - Internalize the decision ledger: **TUNABLE** items you own (decide, record), **OPEN**
   items you must ask about before building on them, **DEFERRED** items you must not build.
+- **Record the intake**: the conformance verdict plus every gap escalated and how it was
+  resolved — one line each, in the scaffold commit message or `CLAUDE.md`'s status
+  section. Escalation counts are the pipeline's grading data; an intake that leaves no
+  artifact can't be graded afterwards.
 
 ## Phase 1 — Scaffold (one commit)
 
